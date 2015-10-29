@@ -13,12 +13,26 @@ func ExtractColumn(logContents string, column uint8) string {
 	lines := strings.Split(logContents, "\n")
 
 	for i := range lines {
-		cols := strings.Split(lines[i], " ")
-		buffer.WriteString(cols[column])
+        if lines[i] == "" {
+            continue
+        }
 
-		if column == 0 {
+		cols := strings.Split(lines[i], " ")
+
+		switch column {
+		case 0:
+			buffer.WriteString(cols[0])
 			buffer.WriteString(" ")
 			buffer.WriteString(cols[1])
+		case 1:
+			buffer.WriteString(cols[2])
+		case 2:
+			buffer.WriteString(cols[3])
+
+			for j := 4; j < len(cols); j++ {
+				buffer.WriteString(" ")
+				buffer.WriteString(cols[j])
+			}
 		}
 
 		buffer.WriteString("\n")
@@ -46,5 +60,5 @@ func main() {
 		buffer.WriteString("\n")
 	}
 
-	fmt.Printf(ExtractColumn(buffer.String(), column))
+	fmt.Print(ExtractColumn(buffer.String(), column))
 }
