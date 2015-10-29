@@ -10,14 +10,16 @@ import (
 
 func ExtractColumn(logContents string, column uint8) string {
 	var buffer bytes.Buffer
-	lines := strings.Split(logContents, "\n")
+    scanner := bufio.NewScanner(strings.NewReader(logContents))
 
-	for i := range lines {
-        if lines[i] == "" {
+    for scanner.Scan() {
+        line := scanner.Text()
+
+        if line == "" {
             continue
         }
 
-		cols := strings.Split(lines[i], " ")
+		cols := strings.Split(line, " ")
 
 		switch column {
 		case 0:
