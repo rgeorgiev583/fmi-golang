@@ -10,14 +10,14 @@ import (
 
 func ExtractColumn(logContents string, column uint8) string {
 	var buffer bytes.Buffer
-    scanner := bufio.NewScanner(strings.NewReader(logContents))
+	scanner := bufio.NewScanner(strings.NewReader(logContents))
 
-    for scanner.Scan() {
-        line := scanner.Text()
+	for scanner.Scan() {
+		line := scanner.Text()
 
-        if line == "" {
-            continue
-        }
+		if line == "" {
+			continue
+		}
 
 		cols := strings.Split(line, " ")
 
