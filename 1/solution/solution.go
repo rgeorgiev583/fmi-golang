@@ -28,8 +28,9 @@ func ExtractColumn(logContents string, column uint8) string {
 			buffer.WriteString(cols[2])
 		case 2:
 			buffer.WriteString(cols[3])
+            colCount := len(cols)
 
-			for j := 4; j < len(cols); j++ {
+			for j := 4; j < colCount; j++ {
 				buffer.WriteString(" ")
 				buffer.WriteString(cols[j])
 			}
