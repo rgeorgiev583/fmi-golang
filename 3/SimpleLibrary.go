@@ -88,13 +88,13 @@ func (sl *SimpleLibrary) addBook(book *Book) (registeredCopyCount int, err error
 func (sl *SimpleLibrary) AddBookJSON(data []byte) (int, error) {
     var book *Book
     json.Unmarshal(data, book)
-    return el.addBook(book)
+    return sl.addBook(book)
 }
 
 func (sl *SimpleLibrary) AddBookXML(data []byte) (int, error) {
     var book *Book
     xml.Unmarshal(data, book)
-    return el.addBook(book)
+    return sl.addBook(book)
 }
 
 func (sl *SimpleLibrary) Hello() (requests chan<- LibraryRequest, responses <-chan LibraryResponse) {
