@@ -16,5 +16,5 @@ func (r *SimpleLibraryResponse) GetBook() (fmt.Stringer, error) {
 }
 
 func (r *SimpleLibraryResponse) GetAvailability() (int, int) {
-    return availableCopyCount, registeredCopyCount
+    return r.availableCopyCount, r.registeredCopyCount
 }
