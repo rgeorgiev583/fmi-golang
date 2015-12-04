@@ -54,6 +54,7 @@ func (l *Library) MarshalXML(e *Encoder, start StartElement) error {
 
 func (l *Library) UnmarshalXML(d *Decoder, start StartElement) error {
     return d.DecodeElement(l, &start)
+}
 
 func (e *TooManyCopiesBookError) Error() string {
     return fmt.Sprintf("Има 4 копия на книга %v", e.ISBN)
