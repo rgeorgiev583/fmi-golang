@@ -74,7 +74,7 @@ func (e *AllCopiesAvailableBookError) Error() string {
 
 func (sl *SimpleLibrary) addBook(book *Book) (registeredCopyCount int, err error) {
     if sl.registeredCopyCount[book.ISBN] >= 4 {
-        err = TooManyCopiesBookError{ISBN: book.ISBN}
+        err = &TooManyCopiesBookError{BookError{book.ISBN}}
     } else {
         sl.Books[book.ISBN] = book
         sl.registeredCopyCount[book.ISBN]++
