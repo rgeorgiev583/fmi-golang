@@ -12,3 +12,11 @@ func (r *SimpleLibraryRequest) GetType() int {
 func (r *SimpleLibraryRequest) GetISBN() string {
     return r.bookISBN
 }
+
+func (r *SimpleLibraryRequest) SetType(t int) {
+    r.requestType = t
+}
+
+func (r *SimpleLibraryRequest) SetISBN(isbn string) {
+    r.bookISBN = isbn
+}
