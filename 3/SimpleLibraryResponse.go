@@ -5,7 +5,7 @@ import (
 )
 
 type SimpleLibraryResponse struct {
-    book Book
+    book *Book
     registeredCopyCount int
     availableCopyCount int
     err error
