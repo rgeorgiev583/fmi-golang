@@ -18,35 +18,28 @@ func OrderedLogDrainer(logs chan (chan string)) chan string {
     mergedLogs := make(chan string, 100)
 
     go func() {
-        logsSyncer := make(chan struct{})
+        //syncer := make(chan struct{})
 
-        go func() {
+        //go func() {
             i := 1
 
             for log := range logs {
+
                 go func(i int) {
-                    logSyncer := make(chan struct{})
-
-                    go func() {
-                        for logEntry := range log {
-                            mergedLogs <- fmt.Sprintf("%d\t%s", i, logEntry)
-                        }
-
-                        <-logSyncer
-                    }()
-
-                    logSyncer <- struct{}{}
-                    close(logSyncer)
+                    //<-syncer
+                    for logEntry := range log {
+                        mergedLogs <- fmt.Sprintf("%d\t%s", i, logEntry)
+                    }
+                    //syncer <- struct{}{}
                 }(i)
 
                 i++
             }
 
-            <-logsSyncer
-        }()
+            //close(syncer)
+        //}()
 
-        logsSyncer <- struct{}{}
-        close(logsSyncer)
+        //syncer <- struct{}{}
         close(mergedLogs)
     }()
 
