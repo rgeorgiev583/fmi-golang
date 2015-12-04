@@ -14,7 +14,7 @@ const (
 )
 
 type SimpleLibrary struct {
-    books map[string]*Book
+    Books map[string]*Book
     registeredCopyCount map[string]int
     availableCopyCount map[string]int
     librarians chan struct{}
@@ -76,7 +76,7 @@ func (sl *SimpleLibrary) addBook(book *Book) (registeredCopyCount int, err error
     if sl.registeredCopyCount[book.ISBN] >= 4 {
         err = TooManyCopiesBookError{ISBN: book.ISBN}
     } else {
-        sl.books[book.ISBN] = book
+        sl.Books[book.ISBN] = book
         sl.registeredCopyCount[book.ISBN]++
         sl.availableCopyCount[book.ISBN]++
         registeredCopyCount = sl.registeredCopyCount
@@ -109,7 +109,7 @@ func (sl *SimpleLibrary) Hello() (requests chan<- LibraryRequest, responses <-ch
 
             switch request.GetType() {
             case TakeBook:
-                if book, isBookRegistered := sl.books[isbn]; isBookRegistered && sl.availableCopyCount[isbn] > 0 {
+                if book, isBookRegistered := sl.Books[isbn]; isBookRegistered && sl.availableCopyCount[isbn] > 0 {
                     response.book = book
                     sl.availableCopyCount[isbn]--
                 } else if !isBookRegistered {
@@ -119,7 +119,7 @@ func (sl *SimpleLibrary) Hello() (requests chan<- LibraryRequest, responses <-ch
                 }
 
             case ReturnBook:
-                if _, isBookRegistered := sl.books[isbn]; isBookRegistered && sl.availableCopyCount[isbn] < sl.registeredCopyCount[isbn] {
+                if _, isBookRegistered := sl.Books[isbn]; isBookRegistered && sl.availableCopyCount[isbn] < sl.registeredCopyCount[isbn] {
                     sl.availableCopyCount[isbn]++
                 } else if !isBookRegistered {
                     response.err = &NotFoundBookError{BookError{isbn}}
@@ -142,7 +142,7 @@ func (sl *SimpleLibrary) Hello() (requests chan<- LibraryRequest, responses <-ch
 
 func NewLibrary(librarians int) Library {
     return &SimpleLibrary{
-        books: make(map[string]*Book),
+        Books: make(map[string]*Book),
         registeredCopyCount: make(map[string]int),
         availableCopyCount: make(map[string]int),
         librarians: make(chan struct{}, librarians),
