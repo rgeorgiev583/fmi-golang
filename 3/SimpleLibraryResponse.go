@@ -1,5 +1,9 @@
 package main
 
+import (
+    "fmt"
+)
+
 type SimpleLibraryResponse struct {
     book Book
     registeredCopyCount int
