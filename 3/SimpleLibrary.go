@@ -6,6 +6,13 @@ import (
     "xml"
 )
 
+const (
+    _ = iota
+    TakeBook
+    ReturnBook
+    GetAvailability
+)
+
 type SimpleLibrary struct {
     books map[string]*Book
     registeredCopyCount map[string]int
