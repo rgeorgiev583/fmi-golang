@@ -79,7 +79,7 @@ func (sl *SimpleLibrary) addBook(book *Book) (registeredCopyCount int, err error
         sl.Books[book.ISBN] = book
         sl.registeredCopyCount[book.ISBN]++
         sl.availableCopyCount[book.ISBN]++
-        registeredCopyCount = sl.registeredCopyCount
+        registeredCopyCount = sl.registeredCopyCount[book.ISBN]
     }
 
     return
