@@ -32,7 +32,7 @@ type NotFoundBookError struct {
     BookError
 }
 
-type NotAvaiableBookError struct {
+type NotAvailableBookError struct {
     BookError
 }
 
