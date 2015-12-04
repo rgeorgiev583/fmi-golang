@@ -1,10 +1,10 @@
 package main
 
-import {
+import (
     "fmt"
     "json"
     "xml"
-}
+)
 
 type Person struct {
     FirstName string `json:"first_name", xml:"first_name"`

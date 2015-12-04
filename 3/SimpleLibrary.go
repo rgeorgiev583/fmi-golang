@@ -1,10 +1,10 @@
 package main
 
-import {
+import (
     "fmt"
     "json"
     "xml"
-}
+)
 
 type SimpleLibrary struct {
     books map[string]*Book
