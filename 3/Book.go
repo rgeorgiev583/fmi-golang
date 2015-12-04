@@ -25,9 +25,11 @@ type Book struct {
 
 func (p *Person) Person() string {
     return fmt.Sprintf("%v %v", p.FirstName, p.LastName)
+}
 
 func (b *Book) String() string {
     return fmt.Sprintf("[%v] %v от %v", b.ISBN, b.Title, b.Author)
+}
 
 func (b *Book) MarshalJSON() ([]byte, error) {
     return json.Marshal(b)
@@ -43,3 +45,4 @@ func (b *Book) MarshalXML(e *Encoder, start StartElement) error {
 
 func (b *Book) UnmarshalXML(d *Decoder, start StartElement) error {
     return d.DecodeElement(b, &start)
+}
