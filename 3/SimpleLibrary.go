@@ -97,9 +97,9 @@ func (sl *SimpleLibrary) AddBookXML(data []byte) (int, error) {
     return sl.addBook(book)
 }
 
-func (sl *SimpleLibrary) Hello() (requests chan<- LibraryRequest, responses <-chan LibraryResponse) {
-    requests = make(chan<- LibraryRequest)
-    responses = make(<-chan LibraryResponse)
+func (sl *SimpleLibrary) Hello() (chan<- LibraryRequest, <-chan LibraryResponse) {
+    requests := make(chan LibraryRequest)
+    responses := make(chan LibraryResponse)
 
     go func() {
         for request := range requests {
@@ -137,7 +137,7 @@ func (sl *SimpleLibrary) Hello() (requests chan<- LibraryRequest, responses <-ch
         }
     }()
 
-    return
+    return requests, responses
 }
 
 func NewLibrary(librarians int) Library {
