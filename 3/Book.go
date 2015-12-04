@@ -2,8 +2,8 @@ package main
 
 import (
     "fmt"
-    "json"
-    "xml"
+    "encoding/json"
+    "encoding/xml"
 )
 
 type Person struct {
