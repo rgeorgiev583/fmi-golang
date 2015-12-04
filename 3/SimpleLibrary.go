@@ -145,6 +145,6 @@ func NewLibrary(librarians int) Library {
         books: make(map[string]*Book),
         registeredCopyCount: make(map[string]int),
         availableCopyCount: make(map[string]int),
-        librarians: make(chan struct{}, librarians)
+        librarians: make(chan struct{}, librarians),
     }
 }
