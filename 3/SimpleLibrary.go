@@ -40,20 +40,20 @@ type AllCopiesAvailableBookError struct {
     BookError
 }
 
-func (l *Library) MarshalJSON() ([]byte, error) {
-    return json.Marshal(l)
+func (sl *SimpleLibrary) MarshalJSON() ([]byte, error) {
+    return json.Marshal(sl)
 }
 
-func (l *Library) UnmarshalJSON(data []byte) error {
-    return json.Unmarshal(data, l)
+func (sl *SimpleLibrary) UnmarshalJSON(data []byte) error {
+    return json.Unmarshal(data, sl)
 }
 
-func (l *Library) MarshalXML(e *Encoder, start StartElement) error {
-    return e.EncodeElement(l, start)
+func (sl *SimpleLibrary) MarshalXML(e *Encoder, start StartElement) error {
+    return e.EncodeElement(sl, start)
 }
 
-func (l *Library) UnmarshalXML(d *Decoder, start StartElement) error {
-    return d.DecodeElement(l, &start)
+func (sl *SimpleLibrary) UnmarshalXML(d *Decoder, start StartElement) error {
+    return d.DecodeElement(sl, &start)
 }
 
 func (e *TooManyCopiesBookError) Error() string {
