@@ -39,10 +39,10 @@ func (b *Book) UnmarshalJSON(data []byte) error {
     return json.Unmarshal(data, b)
 }
 
-func (b *Book) MarshalXML(e *Encoder, start StartElement) error {
+func (b *Book) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
     return e.EncodeElement(b, start)
 }
 
-func (b *Book) UnmarshalXML(d *Decoder, start StartElement) error {
+func (b *Book) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
     return d.DecodeElement(b, &start)
 }

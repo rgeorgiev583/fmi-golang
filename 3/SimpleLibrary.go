@@ -48,11 +48,11 @@ func (sl *SimpleLibrary) UnmarshalJSON(data []byte) error {
     return json.Unmarshal(data, sl)
 }
 
-func (sl *SimpleLibrary) MarshalXML(e *Encoder, start StartElement) error {
+func (sl *SimpleLibrary) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
     return e.EncodeElement(sl, start)
 }
 
-func (sl *SimpleLibrary) UnmarshalXML(d *Decoder, start StartElement) error {
+func (sl *SimpleLibrary) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
     return d.DecodeElement(sl, &start)
 }
 
