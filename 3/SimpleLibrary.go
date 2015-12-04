@@ -76,8 +76,9 @@ func (sl *SimpleLibrary) addBook(book *Book) (registeredCopyCount int, err error
         err = TooManyCopiesBookError{ISBN: book.ISBN}
     } else {
         sl.books[book.ISBN] = book
-        registeredCopyCount = ++sl.registeredCopyCount[book.ISBN]
-        ++sl.availableCopyCount[book.ISBN]
+        sl.registeredCopyCount[book.ISBN]++
+        sl.availableCopyCount[book.ISBN]++
+        registeredCopyCount = sl.registeredCopyCount
     }
 
     return
@@ -109,7 +110,7 @@ func (sl *SimpleLibrary) Hello() (requests chan<- LibraryRequest, responses <-ch
             case TakeBook:
                 if book, isBookRegistered := sl.books[isbn]; isBookRegistered && sl.availableCopyCount[isbn] > 0 {
                     response.book = book
-                    --sl.availableCopyCount[isbn]
+                    sl.availableCopyCount[isbn]--
                 } else if !isBookRegistered {
                     response.err = &NotFoundBookError{BookError{isbn}}
                 } else {
@@ -118,7 +119,7 @@ func (sl *SimpleLibrary) Hello() (requests chan<- LibraryRequest, responses <-ch
 
             case ReturnBook:
                 if _, isBookRegistered := sl.books[isbn]; isBookRegistered && sl.availableCopyCount[isbn] < sl.registeredCopyCount[isbn] {
-                    ++sl.availableCopyCount[isbn]
+                    sl.availableCopyCount[isbn]++
                 } else if !isBookRegistered {
                     response.err = &NotFoundBookError{BookError{isbn}}
                 } else {
