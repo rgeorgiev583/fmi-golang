@@ -76,10 +76,8 @@ type Book struct {
 
 type SimpleLibrary struct {
 	Books               map[string]*Book
-	registeredCopyCount map[string]int
-	availableCopyCount  map[string]int
-	librarians          chan struct{}
-    sync                chan struct{}
+	registeredCopyCount, availableCopyCount  map[string]int
+    librarians, sync                chan struct{}
 }
 
 type SimpleLibraryRequest struct {
@@ -89,8 +87,7 @@ type SimpleLibraryRequest struct {
 
 type SimpleLibraryResponse struct {
 	book                *Book
-	registeredCopyCount int
-	availableCopyCount  int
+	registeredCopyCount, availableCopyCount  int
 	err                 error
 }
 
@@ -192,9 +189,11 @@ func (sl *SimpleLibrary) Hello() (chan<- LibraryRequest, <-chan LibraryResponse)
 	go func() {
 		for request := range requests {
             isbn := request.GetISBN()
+
             <-sl.sync
             book, isBookRegistered := sl.Books[isbn]
             sl.sync <- struct{}{}
+
             response := &SimpleLibraryResponse{}
 
             if !isBookRegistered {
@@ -204,6 +203,7 @@ func (sl *SimpleLibrary) Hello() (chan<- LibraryRequest, <-chan LibraryResponse)
             }
 
             <-sl.sync
+
             switch request.GetType() {
             case TakeBook:
                 if sl.availableCopyCount[isbn] > 0 {
@@ -228,6 +228,7 @@ func (sl *SimpleLibrary) Hello() (chan<- LibraryRequest, <-chan LibraryResponse)
             response.registeredCopyCount = sl.registeredCopyCount[isbn]
             response.availableCopyCount = sl.availableCopyCount[isbn]
             sl.sync <- struct{}{}
+
             responses <- response
 		}
 
