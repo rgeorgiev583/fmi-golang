@@ -190,42 +190,40 @@ func (sl *SimpleLibrary) Hello() (chan<- LibraryRequest, <-chan LibraryResponse)
 
 	go func() {
 		for request := range requests {
-			go func() {
-				isbn := request.GetISBN()
-				book, isBookRegistered := sl.Books[isbn]
-				response := &SimpleLibraryResponse{}
+            isbn := request.GetISBN()
+            book, isBookRegistered := sl.Books[isbn]
+            response := &SimpleLibraryResponse{}
 
-				if !isBookRegistered {
-					response.err = &NotFoundBookError{BookError{isbn}}
-					responses <- response
-					return
-				}
+            if !isBookRegistered {
+                response.err = &NotFoundBookError{BookError{isbn}}
+                responses <- response
+                return
+            }
 
-				switch request.GetType() {
-				case TakeBook:
-					if sl.availableCopyCount[isbn] > 0 {
-						sl.availableCopyCount[isbn]--
-						response.book = book
-					} else {
-						response.err = &NotAvailableBookError{BookError{isbn}}
-					}
+            switch request.GetType() {
+            case TakeBook:
+                if sl.availableCopyCount[isbn] > 0 {
+                    sl.availableCopyCount[isbn]--
+                    response.book = book
+                } else {
+                    response.err = &NotAvailableBookError{BookError{isbn}}
+                }
 
-				case ReturnBook:
-					if sl.availableCopyCount[isbn] < sl.registeredCopyCount[isbn] {
-						sl.availableCopyCount[isbn]++
-						response.book = book
-					} else {
-						response.err = &AllCopiesAvailableBookError{BookError{isbn}}
-					}
+            case ReturnBook:
+                if sl.availableCopyCount[isbn] < sl.registeredCopyCount[isbn] {
+                    sl.availableCopyCount[isbn]++
+                    response.book = book
+                } else {
+                    response.err = &AllCopiesAvailableBookError{BookError{isbn}}
+                }
 
-				case GetAvailability:
-					response.book = book
-				}
+            case GetAvailability:
+                response.book = book
+            }
 
-				response.registeredCopyCount = sl.registeredCopyCount[isbn]
-				response.availableCopyCount = sl.availableCopyCount[isbn]
-				responses <- response
-			}()
+            response.registeredCopyCount = sl.registeredCopyCount[isbn]
+            response.availableCopyCount = sl.availableCopyCount[isbn]
+            responses <- response
 		}
 
 		sl.librarians <- struct{}{}
