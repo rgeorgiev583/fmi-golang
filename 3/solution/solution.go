@@ -7,6 +7,10 @@ import (
 )
 
 const (
+	bufferSize = 100
+)
+
+const (
 	_ = iota
 	TakeBook
 	ReturnBook
@@ -179,8 +183,8 @@ func (sl *SimpleLibrary) AddBookXML(data []byte) (int, error) {
 }
 
 func (sl *SimpleLibrary) Hello() (chan<- LibraryRequest, <-chan LibraryResponse) {
-	requests := make(chan LibraryRequest, 100)
-	responses := make(chan LibraryResponse, 100)
+	requests := make(chan LibraryRequest, bufferSize)
+	responses := make(chan LibraryResponse, bufferSize)
 
 	<-sl.librarians
 
