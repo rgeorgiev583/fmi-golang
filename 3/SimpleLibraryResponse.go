@@ -5,12 +5,10 @@ import (
 )
 
 type SimpleLibraryResponse struct {
-	book                *Book
-	registeredCopyCount int
-	availableCopyCount  int
-	err                 error
+	book                                    *Book
+	registeredCopyCount, availableCopyCount int
+	err                                     error
 }
-
 func (r *SimpleLibraryResponse) GetBook() (fmt.Stringer, error) {
 	return r.book, r.err
 }
