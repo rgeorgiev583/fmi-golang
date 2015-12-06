@@ -18,9 +18,9 @@ const (
 )
 
 type SimpleLibrary struct {
-	books               map[string]*Book
-	registeredCopyCount, availableCopyCount  map[string]int
-    librarians, sync                chan struct{}
+	books                                   map[string]*Book
+	registeredCopyCount, availableCopyCount map[string]int
+	librarians, sync                        chan struct{}
 }
 
 type BookError struct {
@@ -92,48 +92,48 @@ func (sl *SimpleLibrary) Hello() (chan<- LibraryRequest, <-chan LibraryResponse)
 
 	go func() {
 		for request := range requests {
-            isbn := request.GetISBN()
+			isbn := request.GetISBN()
 
-            <-sl.sync
-            book, isBookRegistered := sl.books[isbn]
-            sl.sync <- struct{}{}
+			<-sl.sync
+			book, isBookRegistered := sl.books[isbn]
+			sl.sync <- struct{}{}
 
-            response := &SimpleLibraryResponse{}
+			response := &SimpleLibraryResponse{}
 
-            if !isBookRegistered {
-                response.err = &NotFoundBookError{BookError{isbn}}
-                responses <- response
-                return
-            }
+			if !isBookRegistered {
+				response.err = &NotFoundBookError{BookError{isbn}}
+				responses <- response
+				return
+			}
 
-            <-sl.sync
+			<-sl.sync
 
-            switch request.GetType() {
-            case TakeBook:
-                if sl.availableCopyCount[isbn] > 0 {
-                    sl.availableCopyCount[isbn]--
-                    response.book = book
-                } else {
-                    response.err = &NotAvailableBookError{BookError{isbn}}
-                }
+			switch request.GetType() {
+			case TakeBook:
+				if sl.availableCopyCount[isbn] > 0 {
+					sl.availableCopyCount[isbn]--
+					response.book = book
+				} else {
+					response.err = &NotAvailableBookError{BookError{isbn}}
+				}
 
-            case ReturnBook:
-                if sl.availableCopyCount[isbn] < sl.registeredCopyCount[isbn] {
-                    sl.availableCopyCount[isbn]++
-                    response.book = book
-                } else {
-                    response.err = &AllCopiesAvailableBookError{BookError{isbn}}
-                }
+			case ReturnBook:
+				if sl.availableCopyCount[isbn] < sl.registeredCopyCount[isbn] {
+					sl.availableCopyCount[isbn]++
+					response.book = book
+				} else {
+					response.err = &AllCopiesAvailableBookError{BookError{isbn}}
+				}
 
-            case GetAvailability:
-                response.book = book
-            }
+			case GetAvailability:
+				response.book = book
+			}
 
-            response.registeredCopyCount = sl.registeredCopyCount[isbn]
-            response.availableCopyCount = sl.availableCopyCount[isbn]
-            sl.sync <- struct{}{}
+			response.registeredCopyCount = sl.registeredCopyCount[isbn]
+			response.availableCopyCount = sl.availableCopyCount[isbn]
+			sl.sync <- struct{}{}
 
-            responses <- response
+			responses <- response
 		}
 
 		sl.librarians <- struct{}{}
@@ -148,7 +148,7 @@ func NewLibrary(librarians int) Library {
 		registeredCopyCount: make(map[string]int),
 		availableCopyCount:  make(map[string]int),
 		librarians:          make(chan struct{}, librarians),
-        sync:                make(chan struct{}, 1),
+		sync:                make(chan struct{}, 1),
 	}
 
 	for i := 0; i < librarians; i++ {

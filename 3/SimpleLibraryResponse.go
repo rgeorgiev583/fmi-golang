@@ -9,6 +9,7 @@ type SimpleLibraryResponse struct {
 	registeredCopyCount, availableCopyCount int
 	err                                     error
 }
+
 func (r *SimpleLibraryResponse) GetBook() (fmt.Stringer, error) {
 	return r.book, r.err
 }
