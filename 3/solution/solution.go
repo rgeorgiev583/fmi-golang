@@ -75,7 +75,7 @@ type Book struct {
 }
 
 type SimpleLibrary struct {
-	Books               map[string]*Book
+	books               map[string]*Book
 	registeredCopyCount, availableCopyCount  map[string]int
     librarians, sync                chan struct{}
 }
@@ -159,7 +159,7 @@ func (sl *SimpleLibrary) addBook(book *Book) (registeredCopyCount int, err error
 	if sl.registeredCopyCount[book.ISBN] >= 4 {
 		err = &TooManyCopiesBookError{BookError{book.ISBN}}
 	} else {
-		sl.Books[book.ISBN] = book
+		sl.books[book.ISBN] = book
 		sl.registeredCopyCount[book.ISBN]++
 		sl.availableCopyCount[book.ISBN]++
 	}
@@ -191,7 +191,7 @@ func (sl *SimpleLibrary) Hello() (chan<- LibraryRequest, <-chan LibraryResponse)
             isbn := request.GetISBN()
 
             <-sl.sync
-            book, isBookRegistered := sl.Books[isbn]
+            book, isBookRegistered := sl.books[isbn]
             sl.sync <- struct{}{}
 
             response := &SimpleLibraryResponse{}
@@ -240,7 +240,7 @@ func (sl *SimpleLibrary) Hello() (chan<- LibraryRequest, <-chan LibraryResponse)
 
 func NewLibrary(librarians int) Library {
 	sl := &SimpleLibrary{
-		Books:               make(map[string]*Book),
+		books:               make(map[string]*Book),
 		registeredCopyCount: make(map[string]int),
 		availableCopyCount:  make(map[string]int),
 		librarians:          make(chan struct{}, librarians),
