@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-    "sync"
-    "time"
 	"math/rand"
+	"sync"
+	"time"
 )
 
 const (

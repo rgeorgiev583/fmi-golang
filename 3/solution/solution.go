@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 )
 
 const (
