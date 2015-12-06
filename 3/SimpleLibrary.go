@@ -40,22 +40,6 @@ type AllCopiesAvailableBookError struct {
 	BookError
 }
 
-func (sl *SimpleLibrary) MarshalJSON() ([]byte, error) {
-	return json.Marshal(sl)
-}
-
-func (sl *SimpleLibrary) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, sl)
-}
-
-func (sl *SimpleLibrary) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	return e.EncodeElement(sl, start)
-}
-
-func (sl *SimpleLibrary) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	return d.DecodeElement(sl, &start)
-}
-
 func (e *TooManyCopiesBookError) Error() string {
 	return fmt.Sprintf("Има 4 копия на книга %v", e.ISBN)
 }
