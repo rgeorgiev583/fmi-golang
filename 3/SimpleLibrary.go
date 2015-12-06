@@ -1,165 +1,165 @@
 package main
 
 import (
-    "fmt"
-    "encoding/json"
-    "encoding/xml"
+	"encoding/json"
+	"encoding/xml"
+	"fmt"
 )
 
 const (
-    _ = iota
-    TakeBook
-    ReturnBook
-    GetAvailability
+	_ = iota
+	TakeBook
+	ReturnBook
+	GetAvailability
 )
 
 type SimpleLibrary struct {
-    Books map[string]*Book
-    registeredCopyCount map[string]int
-    availableCopyCount map[string]int
-    librarians chan struct{}
+	Books               map[string]*Book
+	registeredCopyCount map[string]int
+	availableCopyCount  map[string]int
+	librarians          chan struct{}
 }
 
 type BookError struct {
-    ISBN string
+	ISBN string
 }
 
 type TooManyCopiesBookError struct {
-    BookError
+	BookError
 }
 
 type NotFoundBookError struct {
-    BookError
+	BookError
 }
 
 type NotAvailableBookError struct {
-    BookError
+	BookError
 }
 
 type AllCopiesAvailableBookError struct {
-    BookError
+	BookError
 }
 
 func (sl *SimpleLibrary) MarshalJSON() ([]byte, error) {
-    return json.Marshal(sl)
+	return json.Marshal(sl)
 }
 
 func (sl *SimpleLibrary) UnmarshalJSON(data []byte) error {
-    return json.Unmarshal(data, sl)
+	return json.Unmarshal(data, sl)
 }
 
 func (sl *SimpleLibrary) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-    return e.EncodeElement(sl, start)
+	return e.EncodeElement(sl, start)
 }
 
 func (sl *SimpleLibrary) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-    return d.DecodeElement(sl, &start)
+	return d.DecodeElement(sl, &start)
 }
 
 func (e *TooManyCopiesBookError) Error() string {
-    return fmt.Sprintf("Има 4 копия на книга %v", e.ISBN)
+	return fmt.Sprintf("Има 4 копия на книга %v", e.ISBN)
 }
 
 func (e *NotFoundBookError) Error() string {
-    return fmt.Sprintf("Непозната книга %v", e.ISBN)
+	return fmt.Sprintf("Непозната книга %v", e.ISBN)
 }
 
 func (e *NotAvailableBookError) Error() string {
-    return fmt.Sprintf("Няма наличност на книга %v", e.ISBN)
+	return fmt.Sprintf("Няма наличност на книга %v", e.ISBN)
 }
 
 func (e *AllCopiesAvailableBookError) Error() string {
-    return fmt.Sprintf("Всички копия са налични %v", e.ISBN)
+	return fmt.Sprintf("Всички копия са налични %v", e.ISBN)
 }
 
 func (sl *SimpleLibrary) addBook(book *Book) (registeredCopyCount int, err error) {
-    if sl.registeredCopyCount[book.ISBN] >= 4 {
-        err = &TooManyCopiesBookError{BookError{book.ISBN}}
-    } else {
-        sl.Books[book.ISBN] = book
-        sl.registeredCopyCount[book.ISBN]++
-        sl.availableCopyCount[book.ISBN]++
-    }
+	if sl.registeredCopyCount[book.ISBN] >= 4 {
+		err = &TooManyCopiesBookError{BookError{book.ISBN}}
+	} else {
+		sl.Books[book.ISBN] = book
+		sl.registeredCopyCount[book.ISBN]++
+		sl.availableCopyCount[book.ISBN]++
+	}
 
-    registeredCopyCount = sl.registeredCopyCount[book.ISBN]
-    return
+	registeredCopyCount = sl.registeredCopyCount[book.ISBN]
+	return
 }
 
 func (sl *SimpleLibrary) AddBookJSON(data []byte) (int, error) {
-    book := &Book{}
-    json.Unmarshal(data, book)
-    return sl.addBook(book)
+	book := &Book{}
+	json.Unmarshal(data, book)
+	return sl.addBook(book)
 }
 
 func (sl *SimpleLibrary) AddBookXML(data []byte) (int, error) {
-    book := &Book{}
-    xml.Unmarshal(data, book)
-    return sl.addBook(book)
+	book := &Book{}
+	xml.Unmarshal(data, book)
+	return sl.addBook(book)
 }
 
 func (sl *SimpleLibrary) Hello() (chan<- LibraryRequest, <-chan LibraryResponse) {
-    requests := make(chan LibraryRequest, 100)
-    responses := make(chan LibraryResponse, 100)
+	requests := make(chan LibraryRequest, 100)
+	responses := make(chan LibraryResponse, 100)
 
-    <-sl.librarians
+	<-sl.librarians
 
-    go func() {
-        for request := range requests {
-            go func() {
-                isbn := request.GetISBN()
-                book, isBookRegistered := sl.Books[isbn]
-                response := &SimpleLibraryResponse{}
+	go func() {
+		for request := range requests {
+			go func() {
+				isbn := request.GetISBN()
+				book, isBookRegistered := sl.Books[isbn]
+				response := &SimpleLibraryResponse{}
 
-                if !isBookRegistered {
-                    response.err = &NotFoundBookError{BookError{isbn}}
-                    responses <- response
-                    return
-                }
+				if !isBookRegistered {
+					response.err = &NotFoundBookError{BookError{isbn}}
+					responses <- response
+					return
+				}
 
-                switch request.GetType() {
-                case TakeBook:
-                    if sl.availableCopyCount[isbn] > 0 {
-                        sl.availableCopyCount[isbn]--
-                        response.book = book
-                    } else {
-                        response.err = &NotAvailableBookError{BookError{isbn}}
-                    }
+				switch request.GetType() {
+				case TakeBook:
+					if sl.availableCopyCount[isbn] > 0 {
+						sl.availableCopyCount[isbn]--
+						response.book = book
+					} else {
+						response.err = &NotAvailableBookError{BookError{isbn}}
+					}
 
-                case ReturnBook:
-                    if sl.availableCopyCount[isbn] < sl.registeredCopyCount[isbn] {
-                        sl.availableCopyCount[isbn]++
-                        response.book = book
-                    } else {
-                        response.err = &AllCopiesAvailableBookError{BookError{isbn}}
-                    }
+				case ReturnBook:
+					if sl.availableCopyCount[isbn] < sl.registeredCopyCount[isbn] {
+						sl.availableCopyCount[isbn]++
+						response.book = book
+					} else {
+						response.err = &AllCopiesAvailableBookError{BookError{isbn}}
+					}
 
-                case GetAvailability:
-                    response.book = book
-                }
+				case GetAvailability:
+					response.book = book
+				}
 
-                response.registeredCopyCount = sl.registeredCopyCount[isbn]
-                response.availableCopyCount = sl.availableCopyCount[isbn]
-                responses <- response
-            }()
-        }
+				response.registeredCopyCount = sl.registeredCopyCount[isbn]
+				response.availableCopyCount = sl.availableCopyCount[isbn]
+				responses <- response
+			}()
+		}
 
-        sl.librarians <- struct{}{}
-    }()
+		sl.librarians <- struct{}{}
+	}()
 
-    return requests, responses
+	return requests, responses
 }
 
 func NewLibrary(librarians int) Library {
-    sl := &SimpleLibrary{
-        Books: make(map[string]*Book),
-        registeredCopyCount: make(map[string]int),
-        availableCopyCount: make(map[string]int),
-        librarians: make(chan struct{}, librarians),
-    }
+	sl := &SimpleLibrary{
+		Books:               make(map[string]*Book),
+		registeredCopyCount: make(map[string]int),
+		availableCopyCount:  make(map[string]int),
+		librarians:          make(chan struct{}, librarians),
+	}
 
-    for i := 0; i < librarians; i++ {
-        sl.librarians <- struct{}{}
-    }
+	for i := 0; i < librarians; i++ {
+		sl.librarians <- struct{}{}
+	}
 
-    return sl
+	return sl
 }

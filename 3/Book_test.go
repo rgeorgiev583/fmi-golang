@@ -1,12 +1,12 @@
 package main
 
 import (
-    "fmt"
-    "encoding/xml"
+	"encoding/xml"
+	"fmt"
 )
 
 func ExampleUnmarshal() {
-    bookXml := `
+	bookXml := `
 <book isbn="0954540018">
   <title>Who said the race is Over?</title>
   <author>
@@ -24,13 +24,13 @@ func ExampleUnmarshal() {
   </ratings>
 </book>
 `
-    book := &Book{}
-    err := xml.Unmarshal([]byte(bookXml), book)
+	book := &Book{}
+	err := xml.Unmarshal([]byte(bookXml), book)
 
-    if err != nil {
-        fmt.Printf("error: %#v\n", err)
-    }
+	if err != nil {
+		fmt.Printf("error: %#v\n", err)
+	}
 
-    fmt.Printf("%#v\n", book)
-    fmt.Println()
+	fmt.Printf("%#v\n", book)
+	fmt.Println()
 }

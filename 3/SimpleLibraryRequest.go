@@ -1,22 +1,22 @@
 package main
 
 type SimpleLibraryRequest struct {
-    requestType int
-    bookISBN string
+	requestType int
+	bookISBN    string
 }
 
 func (r *SimpleLibraryRequest) GetType() int {
-    return r.requestType
+	return r.requestType
 }
 
 func (r *SimpleLibraryRequest) GetISBN() string {
-    return r.bookISBN
+	return r.bookISBN
 }
 
 func (r *SimpleLibraryRequest) SetType(t int) {
-    r.requestType = t
+	r.requestType = t
 }
 
 func (r *SimpleLibraryRequest) SetISBN(isbn string) {
-    r.bookISBN = isbn
+	r.bookISBN = isbn
 }
