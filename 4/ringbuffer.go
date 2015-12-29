@@ -1,3 +1,5 @@
+package main
+
 type RingBuffer struct {
     buffer []interface{}
     beginPos, endPos int
