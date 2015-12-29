@@ -9,7 +9,7 @@ func (rb *RingBuffer) Slice() []interface{} {
     if rb.beginPos <= rb.endPos {
         return rb.buffer[rb.beginPos:rb.endPos+1]
     } else {
-        return append(buffer[rb.beginPos:], rb.buffer[:rb.endPos+1]
+        return append(buffer[rb.beginPos:], rb.buffer[:rb.endPos+1])
     }
 }
 
