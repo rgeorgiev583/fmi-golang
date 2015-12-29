@@ -3,7 +3,7 @@ type RingBuffer struct {
     beginPos, endPos int
 }
 
-func (rb *RingBuffer) GetDataSlice() []interface{} {
+func (rb *RingBuffer) Slice() []interface{} {
     if rb.beginPos <= rb.endPos {
         return rb.buffer[rb.beginPos:rb.endPos+1]
     } else {
