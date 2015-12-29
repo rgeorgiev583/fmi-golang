@@ -28,3 +28,7 @@ func (rb *RingBuffer) Append(item interface{}) {
 
     rb.buffer[rb.endPos] = item
 }
+
+func NewRingBuffer(size int) *RingBuffer {
+    return &RingBuffer{buffer: make([]interface{}, size)}
+}
