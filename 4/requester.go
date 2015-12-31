@@ -139,9 +139,9 @@ func NewRequester(cacheSize int, throttleSize int) Requester {
                 delete(sr.classes, id)
                 sr.lock.Unlock()
                 sr.throttle <- struct{}{}
-            }
+            }()
         }
 
         sr.waiter.Done()
-    }
+    }()
 }
