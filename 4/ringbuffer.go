@@ -19,7 +19,7 @@ func (iie *InvalidIndexError) Error() string {
 }
 
 func (rb *RingBuffer) Item(index int) (interface{}, error) {
-    if index < 0 || index >= len(rb.buffer) {
+    if index < 0 || index >= len(rb.buffer) || beginPos == 0 && index > endPos {
         return nil, &InvalidIndexError{index}
     }
 
