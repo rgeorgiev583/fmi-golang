@@ -84,7 +84,7 @@ func NewRequester(cacheSize int, throttleSize int) Requester {
     }
 
     for i := 0; i < throttleSize; i++ {
-        throttle <- struct{}{}
+        sr.throttle <- struct{}{}
     }
 
     sr.waiter.Add(1)
