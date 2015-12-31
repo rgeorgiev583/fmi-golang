@@ -145,4 +145,6 @@ func NewRequester(cacheSize int, throttleSize int) Requester {
 
         sr.waiter.Done()
     }()
+
+    return sr
 }
