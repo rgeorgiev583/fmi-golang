@@ -1,8 +1,6 @@
 package main
 
 import (
-    "bytes"
-    "fmt"
     "testing"
 )
 
@@ -35,33 +33,20 @@ func logRingBuffer(t *testing.T, rb *RingBuffer, s []interface{}, message string
     t.Log(message)
     t.Logf("ring buffer: %v", rb)
     t.Logf("slice: %v", s)
-
-    var buf bytes.Buffer
-    buf.WriteString("items in ring buffer:")
-    rbs := rb.Slice()
-
-    for i := range rbs {
-        buf.WriteString(fmt.Sprintf(", %d", rbs[i]))
-    }
-
-    t.Log(buf.String())
-
-    buf.Reset()
-    buf.WriteString("items in slice:")
-
-    for i := range s {
-        buf.WriteString(fmt.Sprintf(", %d", s[i]))
-    }
+    t.Logf("items in ring buffer: %v", rb)
+    t.Logf("items in slice: %v", s)
 }
 
-func testEqualitySlices(t *testing.T, s1 []interface{}, s2 []interface{}) {
-    if len(s1) != len(s2) {
-        t.Errorf("slices %v and %v should have had the same length", s1, s2)
+func testEqualityRingBufferSlice(t *testing.T, rb *RingBuffer, s []interface{}) {
+    if len(s) != len(rb.buffer) {
+        t.Errorf("ring buffer %v and slice %v should have had the same length", rb, s)
     }
 
-    for i := range s1 {
-        if s1[i] != s2[i] {
-            t.Errorf("slices %v and %v should have had the same data", s1, s2)
+    for i := range s {
+        rbi, _ := rb.Item(i)
+
+        if s[i] != rbi {
+            t.Errorf("ring buffer %v and slice %v should have had the same data", rb, s)
         }
     }
 }
@@ -75,13 +60,13 @@ func TestRingBufferAppend(t *testing.T) {
 
     appendNumbers(rb, s, 10, &val, &pos)
     logRingBuffer(t, rb, s, "after adding 1..10")
-    testEqualitySlices(t, rb.Slice(), s)
+    testEqualityRingBufferSlice(t, rb, s)
 
     appendNumbers(rb, s, 5, &val, &pos)
     logRingBuffer(t, rb, s, "after adding 11..15")
-    testEqualitySlices(t, rb.Slice(), s)
+    testEqualityRingBufferSlice(t, rb, s)
 
     appendNumbers(rb, s, 10, &val, &pos)
     logRingBuffer(t, rb, s, "after adding 16..25")
-    testEqualitySlices(t, rb.Slice(), s)
+    testEqualityRingBufferSlice(t, rb, s)
 }
