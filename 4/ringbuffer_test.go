@@ -14,18 +14,18 @@ func TestNewRingBuffer(t *testing.T) {
 
 func appendNumbers(rb *RingBuffer, s []interface{}, count int, val *int, pos *int) {
     for i := 0; i < count; i++ {
-        if *pos == len(s) {
-            for j := 0; j < len(s) - 1; j++ {
-                s[j] = s[j + 1]
+        if *pos == -1 {
+            for j := len(s) - 1; j > 0; j-- {
+                s[j] = s[j - 1]
             }
 
-            *pos--
+            *pos++
         }
 
         rb.Append(*val)
         s[*pos] = *val
         *val++
-        *pos++
+        *pos--
     }
 }
 
@@ -56,7 +56,7 @@ func TestRingBufferAppend(t *testing.T) {
     s := make([]interface{}, 10)
 
     val := 1
-    pos := 0
+    pos := len(s) - 1
 
     appendNumbers(rb, s, 10, &val, &pos)
     logRingBuffer(t, rb, s, "after adding 1..10")
