@@ -43,14 +43,14 @@ func (rnfe *RequestNotFoundError) Error() string {
     return fmt.Sprintf("could not find result of request with ID %v in cache", rnfe.ID)
 }
 
-func (sr *SimpleRequester) FindResult(id string) (interface{}, error) {
+func (sr *SimpleRequester) FindResult(id string) (*CachedResult, error) {
     cacheLen := sr.cache.Length()
 
     for i := 0; i < cacheLen; i++ {
         cacheItem, _ := sr.cache.Item(i)
 
         if result, ok := cacheItem.(CachedResult); ok && result.ID == id {
-            return result, nil
+            return &result, nil
         }
     }
 
