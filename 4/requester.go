@@ -95,6 +95,7 @@ func NewRequester(cacheSize int, throttleSize int) Requester {
 
             go func() {
                 defer sr.waiter.Done()
+                id := request.ID()
                 sr.lock.Lock()
                 class, ok := sr.classes[id]
                 sr.lock.Unlock()
@@ -104,7 +105,6 @@ func NewRequester(cacheSize int, throttleSize int) Requester {
                     return
                 }
 
-                id := request.ID()
                 cachedResult, _ := sr.FindResult(id)
 
                 if cachedResult != nil {
