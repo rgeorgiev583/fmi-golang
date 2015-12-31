@@ -23,10 +23,10 @@ func (rb *RingBuffer) Item(index int) (interface{}, error) {
         return nil, &InvalidIndexError{index}
     }
 
-    pos := rb.beginPos + index
+    pos := rb.endPos - index
 
-    if pos >= len(rb.buffer) {
-        pos -= len(rb.buffer)
+    if pos < 0 {
+        pos += len(rb.buffer)
     }
 
     return rb.buffer[pos], nil
