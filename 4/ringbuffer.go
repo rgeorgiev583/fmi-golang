@@ -27,7 +27,7 @@ func (rb *RingBuffer) Length() int {
 }
 
 func (rb *RingBuffer) Item(index int) (interface{}, error) {
-    if index < 0 || index >= len(rb.buffer) || beginPos == 0 && index > endPos {
+    if index < 0 || index >= len(rb.buffer) || rb.beginPos == 0 && index > rb.endPos {
         return nil, &InvalidIndexError{index}
     }
 
