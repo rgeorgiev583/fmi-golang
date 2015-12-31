@@ -15,7 +15,15 @@ type InvalidIndexError struct {
 }
 
 func (iie *InvalidIndexError) Error() string {
-    return fmt.Sprintf("%d is not a valid index for a ring buffer element", iie.index)
+    return fmt.Sprintf("%d is not a valid index for an element in this buffer", iie.index)
+}
+
+func (rb *RingBuffer) Length() int {
+    if rb.beginPos < rb.endPos {
+        return rb.endPos - rb.beginPos + 1
+    } else {
+        return len(rb.buffer)
+    }
 }
 
 func (rb *RingBuffer) Item(index int) (interface{}, error) {
