@@ -40,11 +40,11 @@ func (rb *RingBuffer) Item(index int) (interface{}, error) {
     return rb.buffer[pos], nil
 }
 
-func (rb *RingBuffer) Append(item interface{}) {
+func (rb *RingBuffer) Append(value interface{}) {
     if rb.beginPos == -1 || rb.endPos == -1 {
         rb.beginPos = 0
         rb.endPos = 0
-        rb.buffer[0] = item
+        rb.buffer[0] = value
         return
     }
 
@@ -60,7 +60,7 @@ func (rb *RingBuffer) Append(item interface{}) {
         rb.beginPos++
     }
 
-    rb.buffer[rb.endPos] = item
+    rb.buffer[rb.endPos] = value
 }
 
 func (rb *RingBuffer) String() string {
