@@ -93,7 +93,7 @@ func NewRequester(cacheSize int, throttleSize int) Requester {
         for request := range sr.queue {
             sr.waiter.Add(1)
 
-            go func() {
+            go func(request Request) {
                 defer sr.waiter.Done()
                 id := request.ID()
                 sr.lock.Lock()
@@ -140,7 +140,7 @@ func NewRequester(cacheSize int, throttleSize int) Requester {
                 delete(sr.classes, id)
                 sr.lock.Unlock()
                 sr.throttle <- struct{}{}
-            }()
+            }(request)
         }
 
         sr.waiter.Done()
